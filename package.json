@@ -1,0 +1,28 @@
+{
+    "name": "food-donation-backend",
+    "version": "1.0.0",
+    "description": "full back end of food donation project, using node, noe4j, jwt",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "nodemon app.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@gitlab.com/fadimoubassaleh/food-backend-v1.git"
+    },
+    "keywords": [
+        "backend"
+    ],
+    "author": "fadi mabsaleh",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://gitlab.com/fadimoubassaleh/food-backend-v1/issues"
+    },
+    "homepage": "https://gitlab.com/fadimoubassaleh/food-backend-v1#readme",
+    "dependencies": {
+        "express": "^4.17.1",
+        "neo4j-driver": "^1.7.6",
+        "nodemon": "^1.19.1"
+    }
+}
