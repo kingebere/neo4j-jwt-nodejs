@@ -6,6 +6,10 @@ const dotenv = require('dotenv'); // env
 
 dotenv.config();
 
+// Middleware
+app.use(express.json());
+//
+
 // neo4j setup
 var driver = neo4j.driver(
     'bolt://localhost',
@@ -35,7 +39,7 @@ app.use('/api/user', userAPI);
 
 // run server (node - express)
 // server variables
-const port = 8080
+const port = process.env.SERVER_PORT
     // 
 app.listen(port, () => console.log('Express run on port ' + port))
     //
