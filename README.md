@@ -5,9 +5,9 @@ This project is the first step preparation to build your **Nodejs** server using
 ## Getting Started
 
 - Check the requirements.
-
   1. [NEO4J](https://neo4j.com/) graph database.
   2. Nodejs (NPM)
+
 
 - Fork the repo.
 - Clone the forked repo.
@@ -23,18 +23,20 @@ This project is the first step preparation to build your **Nodejs** server using
 ## Files map
 
 - assets
-  - user.js ``` routed form app.js (/api/user/) user register, login ```
+  - user.js ``` routed from app.js (/api/user/) user register, login ```
   - verifytoken.js ``` import the file then use it in the API to verify the requested token ```
 - .env ``` the copy of .example.env - change the variable ```
 - app.js ``` the main file server ```
 
 
 ## What now?
-After testing your APIs with the DB and tokens, start build your own APIs to your project requirements.
+After testing the APIs with the DB and tokens, start build your own APIs to your project requirements.
 
 Use express routers, send the token, verify the token and encrypt users password.
 
 Please make sure to update tests as appropriate and I'm waiting for your issues and marge requests.
+
+**NOTE:** for better testing I'm using [postman](https://www.getpostman.com/)
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
