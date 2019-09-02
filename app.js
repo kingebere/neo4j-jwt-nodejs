@@ -1,3 +1,12 @@
+// 
+// auth: Fadi Mabsaleh <fadimoubassaleh@gmail.com>
+// 
+// description: the main file of the server
+// use:     copy .example.env -> change name to .env -> change all the variables
+//          
+// 
+// 
+
 const express = require('express');
 const app = express();
 const neo4j = require('neo4j-driver').v1;
