@@ -53,7 +53,7 @@ router.post('/register', async(req, res) => {
     session
         .run('MATCH (user:Person{email: {email}}) RETURN user', { email: email })
         .then(function(result) {
-            if (result.records[0]) { return res.status(400).send('Email already exists') }
+            if (result.records[0]) { return res.status(400).send('Email already exists') } // check if email exist
             session
                 .run('CREATE (user:Person {email:{emailParam}, password:{passwordParam}}) RETURN user', { emailParam: email, passwordParam: hashedPassword })
                 .then(function() {
@@ -69,10 +69,29 @@ router.post('/register', async(req, res) => {
 })
 
 router.post('/login', async(req, res) => {
-    // Create and assign a token
-    const token = jwt.sign({ _id: 'hello' }, process.env.TOKEN_SECRET)
-    res.header('auth-token', token)
-    res.status(200).send(token)
+    // validate body variables
+    const { error } = joi.validate(req.body, schema);
+    if (error) { return res.status(400).send(error.details[0].message) }
+    // get the email from body
+    const email = req.body.email
+        // let userDetails = []
+    session
+        .run('MATCH (user:Person{email: {email}}) RETURN user', { email: email })
+        .then(async(result) => {
+            // check if email not exist
+            if (!result.records[0]) { return res.status(400).send('User not exist') }
+            // password is correct
+            const validPass = await bcrypt.compare(req.body.password, result.records[0]._fields[0].properties.password)
+            if (!validPass) { return res.status(400).send("Invalid password") }
+
+            // Create and assign a token
+            const token = jwt.sign({ email: email }, process.env.TOKEN_SECRET)
+            res.header('auth-token', token)
+            res.status(200).send('Login success')
+        })
+        .catch(function(err) {
+            console.log(err)
+        })
 })
 
 module.exports = router;
