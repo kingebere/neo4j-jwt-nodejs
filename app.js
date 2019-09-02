@@ -1,10 +1,10 @@
 const express = require('express');
 const app = express();
 const neo4j = require('neo4j-driver').v1;
-const userAPI = require('./routes/user'); // import user apis
+const userAPI = require('./assets/user'); // import user apis
 const dotenv = require('dotenv'); // env
 
-dotenv.config();
+dotenv.config(); // run env variables
 
 // Middleware
 app.use(express.json());
@@ -12,7 +12,7 @@ app.use(express.json());
 
 // neo4j setup
 var driver = neo4j.driver(
-    'bolt://localhost',
+    process.env.NEO_BOLT,
     neo4j.auth.basic(process.env.NEO_USERNAME, process.env.NEO_PASSWORD)
 )
 const session = driver.session()
@@ -23,7 +23,7 @@ app.post('/test', function(req, res) {
         session
             .run('CREATE (user:Person {email:{emailParam}, password:{passwordParam}}) RETURN user', { emailParam: 'ask@fadi.solutions', passwordParam: '1234' })
             .then(function(result) {
-                res.sendStatus(200)
+                res.status(200)
                 console.log('result')
                 session.close();
                 driver.close();
