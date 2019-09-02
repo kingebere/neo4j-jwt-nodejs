@@ -1,3 +1,12 @@
+// 
+// auth: Fadi Mabsaleh <fadimoubassaleh@gmail.com>
+// 
+// description: user section (register + sign-in) after /api/user/...
+// use:     
+//          
+// 
+// 
+
 const router = require('express').Router();
 const express = require('express');
 const app = express();
@@ -14,18 +23,33 @@ var driver = neo4j.driver(
     neo4j.auth.basic(process.env.NEO_USERNAME, process.env.NEO_PASSWORD)
 )
 const session = driver.session()
-    // 
+    // neo4j setup END
 
 // Middleware
 app.use(express.json());
-//
+// Middleware END
+
+// VALIDATION
+const joi = require('@hapi/joi')
+
+const schema = {
+    // name: joi.string().min(6).required(),
+    email: joi.string().min(6).required().email(),
+    password: joi.string().min(6).required()
+}
+
+// VALIDATION END
 
 router.post('/register', async(req, res) => {
+    // validate body variables
+    const { error } = joi.validate(req.body, schema);
+    if (error) { return res.status(400).send(error.details[0].message) }
+    // validate body variables END
     const email = req.body.email;
     // Hash passwords
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
-    // 
+    // Hash passwords END
     session
         .run('MATCH (user:Person{email: {email}}) RETURN user', { email: email })
         .then(function(result) {
