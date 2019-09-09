@@ -1,4 +1,4 @@
-# Starter NodeJs server using Neo4j & JWT
+# Start NodeJs server using Neo4j & JWT
 
 This project is the first step preparation to build your **Nodejs** server using **express** and **Neo4j** graph database (**EXTRA**: JWT, password security, register, login, express router, verification token).
 
