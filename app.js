@@ -32,12 +32,22 @@ app.post('/test', function(req, res) {
         session
             .run('CREATE (user:Person {email:{emailParam}, password:{passwordParam}}) RETURN user', { emailParam: 'ask@fadi.solutions', passwordParam: '1234' })
             .then(function(result) {
-                res.status(200).send(result)
+                res.status(200).json({
+                    success: true,
+                    message: [
+                        result
+                    ]
+                })
                 session.close();
                 driver.close();
             })
             .catch(function(err) {
-                res.status(500).send(err);
+                res.status(500).json({
+                    success: false,
+                    message: [
+                        err
+                    ]
+                });
                 console.log(err)
             })
     })

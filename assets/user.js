@@ -2,14 +2,20 @@
 // auth: Fadi Mabsaleh <fadimoubassaleh@gmail.com>
 // 
 // description: user section (register + sign-in) after /api/user/...
-// use:     
-//          
+// use: 
+// for responses I chosen to send JSON:
+// res.status(500).json({
+//     success: false,
+//     message: [
+//         err
+//     ]
+// })
+// but you can response what ever you want for example:
+// res.status(500).send("The error is: " + err)
 // 
 // 
 
 const router = require('express').Router();
-const express = require('express');
-const app = express();
 const bcrypt = require('bcryptjs'); // encryption
 const neo4j = require('neo4j-driver').v1;
 const dotenv = require('dotenv'); // env
@@ -25,10 +31,6 @@ var driver = neo4j.driver(
 const session = driver.session()
     // neo4j setup END
 
-// Middleware
-app.use(express.json());
-// Middleware END
-
 // VALIDATION
 const joi = require('@hapi/joi')
 
@@ -40,10 +42,18 @@ const schema = {
 
 // VALIDATION END
 
+
 router.post('/register', async(req, res) => {
     // validate body variables
     const { error } = joi.validate(req.body, schema);
-    if (error) { return res.status(400).send(error.details[0].message) }
+    if (error) {
+        return res.status(400).json({
+            success: false,
+            message: [
+                error.details[0].message
+            ]
+        })
+    }
     // validate body variables END
     const email = req.body.email;
     // Hash passwords
@@ -57,13 +67,30 @@ router.post('/register', async(req, res) => {
             session
                 .run('CREATE (user:Person {email:{emailParam}, password:{passwordParam}}) RETURN user', { emailParam: email, passwordParam: hashedPassword })
                 .then(function() {
-                    res.status(200).send("Done registration")
+                    res.status(200).json({
+                        success: true,
+                        message: [
+                            'Done Registration.'
+                        ]
+                    })
                 })
                 .catch(function(err) {
+                    res.status(500).json({
+                        success: false,
+                        message: [
+                            err
+                        ]
+                    })
                     console.log(err)
                 })
         })
         .catch(function(err) {
+            res.status(500).json({
+                success: false,
+                message: [
+                    err
+                ]
+            })
             console.log(err)
         })
 })
@@ -79,17 +106,42 @@ router.post('/login', async(req, res) => {
         .run('MATCH (user:Person{email: {email}}) RETURN user', { email: email })
         .then(async(result) => {
             // check if email not exist
-            if (!result.records[0]) { return res.status(400).send('User not exist') }
+            if (!result.records[0]) {
+                return res.status(400).json({
+                    success: false,
+                    message: [
+                        'User not exist.'
+                    ]
+                })
+            }
             // password is correct
             const validPass = await bcrypt.compare(req.body.password, result.records[0]._fields[0].properties.password)
-            if (!validPass) { return res.status(400).send("Invalid password") }
+            if (!validPass) {
+                return res.status(400).json({
+                    success: false,
+                    message: [
+                        'Invalid password.'
+                    ]
+                })
+            }
 
             // Create and assign a token
             const token = jwt.sign({ email: email }, process.env.TOKEN_SECRET)
             res.header('auth-token', token)
-            res.status(200).send('Login success')
+            res.status(200).json({
+                success: true,
+                message: [
+                    'Login success.'
+                ]
+            })
         })
         .catch(function(err) {
+            res.status(500).json({
+                success: false,
+                message: [
+                    err
+                ]
+            })
             console.log(err)
         })
 })
