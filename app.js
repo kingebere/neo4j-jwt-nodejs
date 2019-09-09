@@ -10,6 +10,7 @@
 const express = require('express');
 const app = express();
 const neo4j = require('neo4j-driver').v1;
+// import {v1 as neo4J, v2 } from 'neo4j-driver';
 const userAPI = require('./assets/user'); // import user apis
 const dotenv = require('dotenv'); // env
 
@@ -32,12 +33,12 @@ app.post('/test', function(req, res) {
         session
             .run('CREATE (user:Person {email:{emailParam}, password:{passwordParam}}) RETURN user', { emailParam: 'ask@fadi.solutions', passwordParam: '1234' })
             .then(function(result) {
-                res.status(200)
-                console.log('result')
+                res.status(200).send(result)
                 session.close();
                 driver.close();
             })
             .catch(function(err) {
+                res.status(500).send(err);
                 console.log(err)
             })
     })
