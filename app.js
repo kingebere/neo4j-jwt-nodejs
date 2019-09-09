@@ -10,7 +10,6 @@
 const express = require('express');
 const app = express();
 const neo4j = require('neo4j-driver').v1;
-// import {v1 as neo4J, v2 } from 'neo4j-driver';
 const userAPI = require('./assets/user'); // import user apis
 const dotenv = require('dotenv'); // env
 
