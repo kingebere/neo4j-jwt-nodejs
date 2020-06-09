@@ -1,34 +1,17 @@
-// 
-// auth: Fadi Mabsaleh <fadimoubassaleh@gmail.com>
-// 
-// description: user section (register + sign-in) after /api/user/...
-// use: 
-// for responses I chosen to send JSON:
-// res.status(500).json({
-//     success: false,
-//     message: [
-//         err
-//     ]
-// })
-// but you can response what ever you want for example:
-// res.status(500).send("The error is: " + err)
-// 
-// 
 
 const router = require('express').Router();
 const bcrypt = require('bcryptjs'); // encryption
-const neo4j = require('neo4j-driver').v1;
+const neo4j = require('neo4j-driver');
 const dotenv = require('dotenv'); // env
 const jwt = require('jsonwebtoken'); // token
 
 dotenv.config(); // run env variables
 
 // neo4j setup
-var driver = neo4j.driver(
-    process.env.NEO_BOLT,
-    neo4j.auth.basic(process.env.NEO_USERNAME, process.env.NEO_PASSWORD)
-)
-const session = driver.session()
+var driver = neo4j.driver('bolt://localhost',neo4j.auth.basic(process.env.NEO_USERNAME,process.env.NEO_PASSWORD))
+var session =driver.session({database:process.env.NEO_DATABASE,defaultAccessMode:neo4j.session.WRITE})
+const verify = require('./verifytoken')
+
     // neo4j setup END
 
 // VALIDATION
@@ -61,11 +44,11 @@ router.post('/register', async(req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
     // Hash passwords END
     session
-        .run('MATCH (user:Person{email: {email}}) RETURN user', { email: email })
+        .run('MATCH (usery:Personi{email: $email}) RETURN usery', { email: email })
         .then(function(result) {
             if (result.records[0]) { return res.status(400).send('Email already exists') } // check if email exist
             session
-                .run('CREATE (user:Person {email:{emailParam}, password:{passwordParam}}) RETURN user', { emailParam: email, passwordParam: hashedPassword })
+                .run('CREATE (usery:Personi {email:$email, password:$password}) RETURN usery', { email: email, password: hashedPassword })
                 .then(function() {
                     res.status(200).json({
                         success: true,
@@ -94,6 +77,17 @@ router.post('/register', async(req, res) => {
             console.log(err)
         })
 })
+router.post('/accept', verify,(req,res)=>{
+session.run('create(nodee:jeez{namey:$namey,grade:$grade}) return nodee',{namey:'dike goodluck',grade:req.user.email})
+.then((result) => {       
+    res.send(result)
+    console.log('result')
+  }).catch((err) => {
+    res.status(400).send(err)
+  });
+  });
+  
+
 
 router.post('/login', async(req, res) => {
     // validate body variables
@@ -103,7 +97,7 @@ router.post('/login', async(req, res) => {
     const email = req.body.email
         // let userDetails = []
     session
-        .run('MATCH (user:Person{email: {email}}) RETURN user', { email: email })
+        .run('MATCH (usery:Personi{email: $email}) RETURN usery', { email: email })
         .then(async(result) => {
             // check if email not exist
             if (!result.records[0]) {

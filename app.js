@@ -8,11 +8,11 @@
 // 
 
 const express = require('express');
-const app = express();
-const neo4j = require('neo4j-driver').v1;
+
+var neo4j = require('neo4j-driver');
 const userAPI = require('./assets/user'); // import user apis
 const dotenv = require('dotenv'); // env
-
+const app = express();
 dotenv.config(); // run env variables
 
 // Middleware
@@ -20,45 +20,30 @@ app.use(express.json());
 //
 
 // neo4j setup
-var driver = neo4j.driver(
-    process.env.NEO_BOLT,
-    neo4j.auth.basic(process.env.NEO_USERNAME, process.env.NEO_PASSWORD)
-)
-const session = driver.session()
-    // 
+
+var driver = neo4j.driver('bolt://localhost',neo4j.auth.basic(process.env.NEO_USERNAME,process.env.NEO_PASSWORD))
+var session =driver.session({database:process.env.NEO_DATABASE,defaultAccessMode:neo4j.session.WRITE})
+
 
 // test neo4j
 app.post('/test', function(req, res) {
-        session
-            .run('CREATE (user:Person {email:{emailParam}, password:{passwordParam}}) RETURN user', { emailParam: 'ask@fadi.solutions', passwordParam: '1234' })
-            .then(function(result) {
-                res.status(200).json({
-                    success: true,
-                    message: [
-                        result
-                    ]
-                })
-                session.close();
-                driver.close();
-            })
-            .catch(function(err) {
-                res.status(500).json({
-                    success: false,
-                    message: [
-                        err
-                    ]
-                });
-                console.log(err)
-            })
-    })
-    // 
+        session.run('CREATE(name:Persony {email:$email, password:$password}) RETURN name ', { email: 'gudoskui@gmail.com', password: 'edjffikvj' })
+        .then((result) => {       
+            res.send(result)
+            console.log('result')
+          }).catch((err) => {
+            res.status(400).send(err)
+          });
+          });
+     
 
 // send user APIs request to user API router
-app.use('/api/user', userAPI);
+
+app.use(userAPI);
 
 // run server (node - express)
 // server variables
-const port = process.env.SERVER_PORT
+const port = process.env.PORT || 6000;
     // 
 app.listen(port, () => console.log('Express run on port ' + port))
     //

@@ -43,4 +43,3 @@ Please make sure to update tests as appropriate and I'm waiting for your issues 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
 
-Fadi Mabsaleh [LinkedIn](https://www.linkedin.com/in/fadi-mabsaleh/) [gitlab](https://gitlab.com/fadimoubassaleh)

@@ -19,14 +19,14 @@
     "bugs": {
         "url": "https://gitlab.com/fadimoubassaleh/food-backend-v1/issues"
     },
-    "homepage": "https://gitlab.com/fadimoubassaleh/food-backend-v1#readme",
+    "homepage": "https://github.com/kingebere",
     "dependencies": {
         "@hapi/joi": "^15.1.1",
         "bcryptjs": "^2.4.3",
         "dotenv": "^8.1.0",
         "express": "^4.17.1",
         "jsonwebtoken": "^8.5.1",
-        "neo4j-driver": "^1.7.6",
+        "neo4j-driver": "^4.0.2",
         "nodemon": "^1.19.1"
     }
 }
