@@ -1,5 +1,4 @@
-// 
-// auth: Fadi Mabsaleh <fadimoubassaleh@gmail.com>
+
 // 
 // description: the main file of the server
 // use:     copy .example.env -> change name to .env -> change all the variables
